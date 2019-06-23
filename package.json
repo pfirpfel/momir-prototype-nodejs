@@ -1,0 +1,28 @@
+{
+  "name": "momir-prototype-nodejs",
+  "version": "1.0.0",
+  "description": "Interactive momir basic console application that prints out cards on a receipt printer.",
+  "main": "src/interactive-momir.js",
+  "scripts": {
+    "install": "node src/install.js",
+    "momir": "node src/interactive-momir.js",
+    "momir-print": "node src/interactive-momir.js --print"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pfirpfel/momir-prototype-nodejs.git"
+  },
+  "keywords": [
+    "momir-basic",
+    "mtg"
+  ],
+  "author": "Michael Kuenzli <michaelkuenzli@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pfirpfel/momir-prototype-nodejs/issues"
+  },
+  "homepage": "https://github.com/pfirpfel/momir-prototype-nodejs#readme",
+  "dependencies": {
+    "escpos": "^2.5.0"
+  }
+}
