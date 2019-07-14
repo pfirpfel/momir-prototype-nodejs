@@ -1,6 +1,6 @@
 const PRINT_ENABLED = process.argv.length === 3 && process.argv[2] === '--print';
 
-const { momirDataFilePath, printerName } = require('./constants');
+const { momirDataFilePath, printerName, printerAddress, printerChannel } = require('./constants');
 const momirCards = require(momirDataFilePath);
 const readline = require('readline');
 
@@ -27,26 +27,35 @@ const askForCMC = function() {
 };
 
 let availablePrinters = null;
-let btPrinter = null;
 let device = null;
 let printer = null;
 
 const setupPrinter = async function(){
   try {
-    const { Bluetooth, Printer } = require('../../node-escpos/'); // TODO: once released used proper import source
-    console.log("Searching for printers...");
-    availablePrinters = await Bluetooth.findPrinters();
-    if (availablePrinters.length == 0) {
-      throw new Error('No printers found!');
+    const { Bluetooth, Printer } = require('node-escpos');
+    let btPrinterName = printerName;
+    let btAddress = printerAddress; // expected format: '01:23:45:67:89:AB'
+    let btChannel = printerChannel;
+
+    // if address or channel are invalid, search by name instead
+    if (btAddress.length !== 17 || !Number.isFinite(btChannel)) {
+      console.log("Searching for printers...");
+      availablePrinters = await Bluetooth.findPrinters();
+      if (availablePrinters.length == 0) {
+        throw new Error('No printers found!');
+      }
+      const namedPrinters = availablePrinters.filter(p => p && p.name === printerName);
+      if (namedPrinters.length < 1) {
+        throw new Error(`No printer with name '${printerName}' found!`);
+      }
+      btPrinterName = namedPrinters[0].name;
+      btAddress = namedPrinters[0].address;
+      btChannel = namedPrinters[0].channel;
     }
-    const namedPrinters = availablePrinters.filter(p => p && p.name === printerName);
-    if (namedPrinters.length < 1) {
-      throw new Error(`No printer with name '${printerName}' found!`);
-    }
-    btPrinter = namedPrinters[0];
-    device = await Bluetooth.getDevice(btPrinter.address, btPrinter.channel);
+
+    device = await Bluetooth.getDevice(btAddress, btChannel);
     printer = await Printer.create(device);
-    console.log(`Printer ${btPrinter.name} connected.`);
+    console.log(`Printer ${btPrinterName} connected.`);
   } catch (err) {
     console.log(`Error during printer setup ${err}`);
     process.exit()
