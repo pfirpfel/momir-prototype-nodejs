@@ -22,7 +22,8 @@
     "url": "https://github.com/pfirpfel/momir-prototype-nodejs/issues"
   },
   "homepage": "https://github.com/pfirpfel/momir-prototype-nodejs#readme",
-  "dependencies": {
-    "escpos": "^2.5.0"
+  "optionalDependencies": {
+    "escpos": "^2.5.0",
+    "node-bluetooth": "^1.2.5"
   }
 }

@@ -32,7 +32,7 @@ let printer = null;
 
 const setupPrinter = async function(){
   try {
-    const { Bluetooth, Printer } = require('node-escpos');
+    const { Bluetooth, Printer } = require('escpos');
     let btPrinterName = printerName;
     let btAddress = printerAddress; // expected format: '01:23:45:67:89:AB'
     let btChannel = printerChannel;
