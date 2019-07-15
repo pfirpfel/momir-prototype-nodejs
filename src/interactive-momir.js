@@ -55,7 +55,7 @@ const setupPrinter = async function(){
 
     device = await Bluetooth.getDevice(btAddress, btChannel);
     printer = await Printer.create(device);
-    console.log(`Printer ${btPrinterName} connected.`);
+    console.log(`Printer ${btPrinterName} (address: ${btAddress} channel: ${btChannel}) connected.`);
   } catch (err) {
     console.log(`Error during printer setup ${err}`);
     process.exit()
