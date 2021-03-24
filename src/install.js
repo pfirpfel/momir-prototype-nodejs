@@ -6,6 +6,7 @@ const isNontokenCreatureCard = (card) => {
     && !card.layout.includes('token') && card.layout !== 'augment' // must be a real card (no token or augment)
     && (card.card_faces === undefined || // in case of a flip card, front side must be a creature
       (card.card_faces !== undefined && card.card_faces[0].type_line.includes('Creature')))
+	&& (card.layout.includes('meld') && card.mana_cost !== '') // exclude meld results (= back sides)
     && (card.set_type === undefined || // exclude joke sets (Unglued, Unhinged, Unstable)
       (card.set_type !== undefined && card.set_type !== 'funny'));
 };
