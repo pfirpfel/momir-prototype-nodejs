@@ -15,6 +15,23 @@ exports.downloadFile = async function(uri, targetPath) {
   });
 };
 
+exports.downloadJSON = async function(uri) {
+  return new Promise((resolve, reject) => {
+    https.get(uri, (response) => {
+      const { statusCode } = response;
+      if (statusCode !== 200) {
+        return reject(new Error(`Status Code: ${statusCode}`));
+      }
+      response.setEncoding('utf8');
+      let rawData = '';
+      response.on('data', (chunk) => { rawData += chunk; });
+      response.on('end', () => {
+        return resolve(JSON.parse(rawData));
+      });
+    });
+  });
+};
+
 exports.fileExists = async function(path) {
   return new Promise((resolve, reject) => {
     fs.access(path, fs.F_OK, (err) => {

@@ -1,5 +1,5 @@
-const { downloadFile, fileExists, writeFile } = require('./util');
-const { scryfallURL, scryfallTempFilePath, momirDataFilePath } = require('./constants');
+const { downloadFile, downloadJSON,  fileExists, writeFile } = require('./util');
+const { scryfallBulkDataRequestURL,  scryfallTempFilePath, momirDataFilePath } = require('./constants');
 
 const isNontokenCreatureCard = (card) => {
   return card.type_line.includes('Creature') // must have Creature in its type
@@ -16,6 +16,13 @@ const isNontokenCreatureCard = (card) => {
     console.log(`Check if ${scryfallTempFilePath} already exists...`)
     const scryfallExists = await fileExists(scryfallTempFilePath);
     if (!scryfallExists) {
+      const bulkData = await downloadJSON(scryfallBulkDataRequestURL);
+      let scryfallURL = '';
+      if (bulkData && bulkData.hasOwnProperty('data') && Array.isArray(bulkData.data)) {
+        scryfallURL = bulkData.data.filter(entry => entry.name === 'Oracle Cards')[0]['download_uri'];
+      } else {
+        throw new Error(`Error while retrieving Scryfall bulk data: ${bulkData}`);
+      }
       console.log(`Downloading '${scryfallURL}' to '${scryfallTempFilePath}'...`);
       await downloadFile(scryfallURL, scryfallTempFilePath);
     }
