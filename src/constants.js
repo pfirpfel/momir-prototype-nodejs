@@ -1,6 +1,6 @@
 const { resolve } = require('path');
 
-exports.scryfallURL = 'https://archive.scryfall.com/json/scryfall-oracle-cards.json';
+exports.scryfallBulkDataRequestURL = 'https://api.scryfall.com/bulk-data';
 
 exports.scryfallTempFilePath = resolve('./scryfall-oracle-cards.json');
 

@@ -1,12 +1,12 @@
-const { downloadFile, fileExists, writeFile } = require('./util');
-const { scryfallURL, scryfallTempFilePath, momirDataFilePath } = require('./constants');
+const { downloadFile, downloadJSON,  fileExists, writeFile } = require('./util');
+const { scryfallBulkDataRequestURL,  scryfallTempFilePath, momirDataFilePath } = require('./constants');
 
 const isNontokenCreatureCard = (card) => {
   return card.type_line.includes('Creature') // must have Creature in its type
     && !card.layout.includes('token') && card.layout !== 'augment' // must be a real card (no token or augment)
     && (card.card_faces === undefined || // in case of a flip card, front side must be a creature
       (card.card_faces !== undefined && card.card_faces[0].type_line.includes('Creature')))
-	&& (card.layout.includes('meld') && card.mana_cost !== '') // exclude meld results (= back sides)
+	&& !(card.layout.includes('meld') && card.mana_cost == '') // exclude meld results (= back sides)
     && (card.set_type === undefined || // exclude joke sets (Unglued, Unhinged, Unstable)
       (card.set_type !== undefined && card.set_type !== 'funny'));
 };
@@ -16,6 +16,13 @@ const isNontokenCreatureCard = (card) => {
     console.log(`Check if ${scryfallTempFilePath} already exists...`)
     const scryfallExists = await fileExists(scryfallTempFilePath);
     if (!scryfallExists) {
+      const bulkData = await downloadJSON(scryfallBulkDataRequestURL);
+      let scryfallURL = '';
+      if (bulkData && bulkData.hasOwnProperty('data') && Array.isArray(bulkData.data)) {
+        scryfallURL = bulkData.data.filter(entry => entry.name === 'Oracle Cards')[0]['download_uri'];
+      } else {
+        throw new Error(`Error while retrieving Scryfall bulk data: ${bulkData}`);
+      }
       console.log(`Downloading '${scryfallURL}' to '${scryfallTempFilePath}'...`);
       await downloadFile(scryfallURL, scryfallTempFilePath);
     }
