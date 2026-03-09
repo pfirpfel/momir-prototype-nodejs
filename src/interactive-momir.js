@@ -65,14 +65,15 @@ const setupPrinter = async function(){
 (async function main() {
   if (PRINT_ENABLED) {
     await setupPrinter();
-  };
-  let continueMomir = true;
-  while(continueMomir) {
+  }
+
+  console.log("Welcome to Momir! Use Ctrl + C to exit.");
+
+  while(true) {
     try {
       let cmc = await askForCMC();
-      // non-numeric input ends the ask-loop
+      // non-numeric input restarts the ask-loop
       if (!isFinite(cmc)) {
-        continueMomir = false;
         continue;
       }
       const momir = getMomir(cmc);
@@ -104,7 +105,7 @@ const setupPrinter = async function(){
       }
     } catch (err) {
       console.log('Error', err);
-      continueMomir = false;
+      break;
     }
   }
   if (PRINT_ENABLED && printer) {
